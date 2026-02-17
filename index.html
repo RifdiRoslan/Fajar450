@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Rifdi Family Hub - To-Dos, Countdowns, SG Calendar</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: system-ui, sans-serif; 
+            background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%); 
+            color: #1e293b; 
+            min-height: 100vh; 
+        }
+        .login-screen, .app { display: none; }
+        .login-screen.active, .app.active { display: block; }
+        .login-form { 
+            max-width: 400px; margin: 4rem auto; 
+            padding: 2rem; background: white; 
+            border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
+            text-align: center; 
+        }
+        .login-form h1 { margin-bottom: 1rem; color: #1d4ed8; }
+        input[type="text"], input[type="password"], select { 
+            width: 100%; padding: 1rem; margin-bottom: 1rem; 
+            border: 2px solid #e2e8f0; border-radius: 12px; 
+            font-size: 1rem; 
+        }
+        input:focus { outline: none; border-color: #3b82f6; }
+        .login-btn { 
+            width: 100%; background: #3b82f6; color: white; 
+            border: none; padding: 1rem; border-radius: 12px; 
+            font-size: 1.1rem; cursor: pointer; font-weight: 500; 
+        }
+        .login-btn:hover { background: #1d4ed8; }
+        header { 
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8); 
+            color: white; padding: 1rem 2rem; 
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        .user-info { font-size: 0.9rem; }
+        .logout { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; }
+        nav { 
+            background: rgba(255,255,255,0.95); 
+            padding: 0.75rem; display: flex; gap: 1rem; 
+            flex-wrap: wrap; justify-content: center; 
+        }
+        nav button { 
+            background: #3b82f6; color: white; 
+            border: none; padding: 0.75rem 1.25rem; 
+            border-radius: 25px; cursor: pointer; font-weight: 500; 
+            transition: all 0.3s; 
+        }
+        nav button.active, nav button:hover { background: #1d4ed8; transform: scale(1.02); }
+        main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .todo-section, .countdown-section, .sg-calendar { 
+            background: white; padding: 1.5rem; 
+            border-radius: 16px; margin-bottom: 1.5rem; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1); 
+        }
+        .todo-input { display: flex; gap: 1rem; margin-bottom: 1rem; }
+        .todo-input input { flex: 1; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; }
+        .todo-add { background: #10b981; color: white; border: none; padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer; }
+        .todo-list { list-style: none; }
+        .todo-item { 
+            display: flex; align-items: center; gap: 1rem; 
+            padding: 1rem; margin-bottom: 0.5rem; 
+            background: #f8fafc; border-radius: 12px; 
+        }
+        .todo-checkbox { width: 20px; height: 20px; cursor: pointer; }
+        .todo-text { flex: 1; }
+        .todo-delete { background: #ef4444; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+        .countdown { 
+            text-align: center; font-size: 1.2rem; 
+            background: linear-gradient(135deg, #fbbf24, #f59e0b); 
+            color: white; padding: 1rem; border-radius: 12px; 
+        }
+        .sg-calendar iframe { 
+            width: 100%; height: 500px; 
+            border: none; border-radius: 12px; 
+        }
+        .members-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; 
+        }
+        .member-card { 
+            background: white; border-radius: 16px; padding: 1.5rem; 
+            text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.1); 
+        }
+        footer { text-align: center; padding: 2rem; background: #1e293b; color: white; margin-top: 3rem; }
+        @media (max-width: 768px) { 
+            .todo-input { flex-direction: column; } 
+            nav { flex-direction: column; } 
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen (same as before) -->
+    <div class="login-screen active">
+        <div class="login-form">
+            <h1>🔐 Rifdi Family Hub</h1>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <select id="role">
+                <option value="">Select Role</option>
+                <option value="superadmin">Super Admin</option>
+                <option value="admin">Admin</option>
+                <option value="user">User</option>
+            </select>
+            <button class="login-btn" onclick="login()">Login</button>
+            <p style="font-size: 0.8rem; color: #64748b;">PW: Wetry@2026</p>
+        </div>
+    </div>
+
+    <div class="app">
+        <header>
+            <div>
+                <h1 style="margin: 0;">Family Hub</h1>
+                <div class="user-info" id="user-info"></div>
+            </div>
+            <button class="logout" onclick="logout()">Logout</button>
+        </header>
+
+        <nav>
+            <button onclick="showPage('home')" class="active">🏠 Home</button>
+            <button onclick="showPage('todos')">✅ To-Dos</button>
+            <button onclick="showPage('countdowns')">🎉 Birthdays</button>
+            <button onclick="showPage('sgcalendar')">🇸🇬 SG Calendar</button>
+            <button onclick="showPage('members')">👨‍👩‍👧 Members</button>
+        </nav>
+
+        <main>
+            <div id="home-page" class="page active">
+                <div class="todo-section">
+                    <h3>Quick To-Do</h3>
+                    <div class="todo-input">
+                        <input id="quick-todo" placeholder="Add quick task...">
+                        <button class="todo-add" onclick="addQuickTodo()">Add</button>
+                    </div>
+                    <ul id="quick-todo-list" class="todo-list"></ul>
+                </div>
+            </div>
+
+            <div id="todos-page" class="page">
+                <div class="todo-section">
+                    <h3>Rifdi's To-Do</h3>
+                    <div class="todo-input">
+                        <input id="rifdi-todo" placeholder="Rifdi's task...">
+                        <button class="todo-add" onclick="addTodo('rifdi')">Add</button>
+                    </div>
+                    <ul id="rifdi-todo-list" class="todo-list"></ul>
+                </div>
+                <div class="todo-section">
+                    <h3>Shahidah's To-Do</h3>
+                    <div class="todo-input">
+                        <input id="shahidah-todo" placeholder="Shahidah's task...">
+                        <button class="todo-add" onclick="addTodo('shahidah')">Add</button>
+                    </div>
+                    <ul id="shahidah-todo-list" class="todo-list"></ul>
+                </div>
+                <div class="todo-section">
+                    <h3>Sairish's To-Do</h3>
+                    <div class="todo-input">
+                        <input id="sairish-todo" placeholder="Sairish's task...">
+                        <button class="todo-add" onclick="addTodo('sairish')">Add</button>
+                    </div>
+                    <ul id="sairish-todo-list" class="todo-list"></ul>
+                </div>
+            </div>
+
+            <div id="countdowns-page" class="page">
+                <div class="countdown-section">
+                    <h3>Birthday Countdowns</h3>
+                    <div id="countdowns"></div>
+                </div>
+            </div>
+
+            <div id="sgcalendar-page" class="page">
+                <div class="sg-calendar">
+                    <h3>Singapore 2026 Calendar</h3>
+                    <p>Public Holidays & School Holidays</p>
+                    <iframe src="https://publicholidays.sg/2026-dates/" style="border-radius:12px;" title="SG 2026 Holidays"></iframe>
+                </div>
+            </div>
+
+            <div id="members-page" class="page">
+                <div class="members-grid" id="members-grid"></div>
+            </div>
+        </main>
+    </div>
+
+    <footer>SG Holidays: New Year's 1 Jan, CNY 17-18 Feb, Good Friday 3 Apr, Labour 1 May, Vesak 31 May, Hari Raya Haji 27 May, Nat'l Day 9 Aug, Deepavali 8 Nov, Xmas 25 Dec[web:37][web:40]</footer>
+
+    <script>
+        // Users (same)
+        const users = {
+            superadmin: { pass: 'Wetry@2026', role: 'superadmin', name: 'Super Admin' },
+            admin: { pass: 'Wetry@2026', role: 'admin', name: 'Admin' },
+            rifdi: { pass: 'Wetry@2026', role: 'user', name: 'Rifdi' },
+            shahidah: { pass: 'Wetry@2026', role: 'user', name: 'Shahidah' }
+        };
+
+        const birthdays = {
+            rifdi: '2026-03-31',
+            shahidah: '2026-06-25',
+            sairish: '2026-12-11'
+        };
+
+        let currentUser = null;
+        let todos = JSON.parse(localStorage.getItem('familyTodos')) || {
+            rifdi: [], shahidah: [], sairish: [], quick: []
+        };
+
+        // Login/Logout (same as before)
+        function login() {
+            const user = document.getElementById('username').value.toLowerCase();
+            const pass = document.getElementById('password').value;
+            if (users[user] && users[user].pass === pass) {
+                currentUser = user;
+                document.querySelector('.login-screen').classList.remove('active');
+                document.querySelector('.app').classList.add('active');
+                document.getElementById('user-info').innerHTML = `Logged in as ${users[user].name}`;
+                renderAll();
+            } else {
+                alert('Invalid login');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.querySelector('.app').classList.remove('active');
+            document.querySelector('.login-screen').classList.add('active');
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(pageId + '-page').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // To-Dos
+        function addTodo(person) {
+            const inputId = person + '-todo';
+            const task = document.getElementById(inputId).value.trim();
+            if (task) {
+                todos[person].unshift({ text: task, done: false, id: Date.now() });
+                localStorage.setItem('familyTodos', JSON.stringify(todos));
+                document.getElementById(inputId).value = '';
+                renderTodo(person);
+            }
+        }
+
+        function addQuickTodo() {
+            addTodo('quick');
+        }
+
+        function toggleTodo(person, id) {
+            const item = todos[person].find(t => t.id === id);
+            if (item) {
+                item.done = !item.done;
+                localStorage.setItem('familyTodos', JSON.stringify(todos));
+                renderTodo(person);
+            }
+        }
+
+        function deleteTodo(person, id) {
+            todos[person] = todos[person].filter(t => t.id !== id);
+            localStorage.setItem('familyTodos', JSON.stringify(todos));
+            renderTodo(person);
+        }
+
+        function renderTodo(person) {
+            const listId = person === 'quick' ? 'quick-todo-list' : person + '-todo-list';
+            const list = document.getElementById(listId);
+            list.innerHTML = todos[person].map(item => `
+                <li class="todo-item">
+                    <input type="checkbox" class="todo-checkbox" ${item.done ? 'checked' : ''} 
+                           onchange="toggleTodo('${person}', ${item.id})">
+                    <span class="todo-text ${item.done ? 'line-through text-muted' : ''}">${item.text}</span>
+                    <button class="todo-delete" onclick="deleteTodo('${person}', ${item.id})">×</button>
+                </li>
+            `).join('');
+        }
+
+        function renderAll() {
+            ['rifdi', 'shahidah', 'sairish', 'quick'].forEach(renderTodo);
+            renderCountdowns();
+            renderMembers();
+        }
+
+        // Countdowns
+        function renderCountdowns() {
+            const container = document.getElementById('countdowns');
+            container.innerHTML = Object.entries(birthdays).map(([person, dateStr]) => {
+                const date = new Date(dateStr);
+                const now = new Date();
+                const diff = date - now;
+                let days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                if (days < 0) days += 365; // Next year
+                return `
+                    <div class="countdown">
+                        <strong>${person.charAt(0).toUpperCase() + person.slice(1)}:</strong> 
+                        ${days} days left! 🎉
+                    </div>
+                `;
+            }).join('');
+            setTimeout(renderCountdowns, 24*60*60*1000); // Update daily
+        }
+
+        // Members (with todo counts)
+        function renderMembers() {
+            const grid = document.getElementById('members-grid');
+            ['rifdi', 'shahidah', 'sairish'].forEach(person => {
+                const count = todos[person].filter(t => !t.done).length;
+                grid.innerHTML += `
+                    <div class="member-card">
+                        <h3>${person.charAt(0).toUpperCase() + person.slice(1)}</h3>
+                        <p>To-Dos left: ${count}</p>
+                        <button onclick="showPage('todos')">View To-Dos</button>
+                    </div>
+                `;
+            });
+        }
+
+        // Enter key support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const active = document.activeElement.id;
+                if (active.includes('-todo')) {
+                    const person = active.split('-')[0];
+                    addTodo(person);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
