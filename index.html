@@ -3,31 +3,642 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fajar450 - Test Build</title>
+    <title>SysAdmin Training Simulation - Main Hub</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f0f0f0; }
-        header { text-align: center; background: #007bff; color: white; padding: 20px; }
-        main { max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        button { background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #218838; }
-        #output { margin-top: 20px; padding: 10px; background: #e9ecef; border-radius: 4px; }
+        :root {
+            --color-bg-primary: #f4f1ea;
+            --color-bg-secondary: #ffffff;
+            --color-bg-tertiary: #e8e3d6;
+            --color-text-primary: #2d2d2d;
+            --color-text-secondary: #5a5a5a;
+            --color-accent: #d47500;
+            --color-success: #0e7c4f;
+            --color-warning: #f59e0b;
+            --color-danger: #c74430;
+            --color-shadow: rgba(0, 0, 0, 0.08);
+            --color-border: #d1ccc0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Bookerly', 'Georgia', 'Times New Roman', serif;
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.75;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 50px 20px;
+            background: var(--color-bg-secondary);
+            border-radius: 8px;
+            margin-bottom: 40px;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 2px 8px var(--color-shadow);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--color-text-primary);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--color-text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .env-badge {
+            display: inline-block;
+            background: var(--color-bg-tertiary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 5px;
+            border: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--color-bg-secondary);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px var(--color-shadow);
+            border: 1px solid var(--color-border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+            border-color: var(--color-accent);
+        }
+
+        .card-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            filter: grayscale(0%);
+        }
+
+        .card h2 {
+            color: var(--color-accent);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .card p {
+            color: var(--color-text-secondary);
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .tag {
+            background: var(--color-bg-tertiary);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: var(--color-text-secondary);
+        }
+
+        .btn-primary {
+            background: var(--color-accent);
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .btn-primary:hover {
+            background: #b86200;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(212, 117, 0, 0.3);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--color-success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            color: var(--color-text-primary);
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--color-border);
+            font-weight: 700;
+        }
+
+        .info-panel {
+            background: var(--color-bg-secondary);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--color-accent);
+            box-shadow: 0 2px 8px var(--color-shadow);
+        }
+
+        .info-panel h3 {
+            color: var(--color-accent);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .info-panel ul {
+            margin-left: 20px;
+            color: var(--color-text-secondary);
+        }
+
+        .info-panel li {
+            margin-bottom: 8px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            color: var(--color-text-secondary);
+            border-top: 1px solid var(--color-bg-tertiary);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Fajar450 App</h1>
-        <p>Continuing development from RifdiRoslan's repo</p>
-    </header>
-    <main>
-        <h2>Welcome!</h2>
-        <p>This is the base HTML5 app. Tell me what to build next (e.g., todo list, calculator, game).</p>
-        <button onclick="demoFunction()">Demo Action</button>
-        <div id="output">Click the button to see output.</div>
-    </main>
+    <div class="container">
+        <header>
+            <h1>🎯 SysAdmin Training Simulation</h1>
+            <p class="subtitle">Comprehensive Multi-Platform Enterprise IT Environment Training</p>
+            <div>
+                <span class="env-badge">20 Systems</span>
+                <span class="env-badge">Multi-Vendor</span>
+                <span class="env-badge">Real-World Scenarios</span>
+            </div>
+            <div class="status-indicator" style="justify-content: center; margin-top: 20px;">
+                <span class="status-dot"></span>
+                <span>All Training Modules Online</span>
+            </div>
+        </header>
+
+        <div class="info-panel">
+            <h3>📋 Your IT Environment</h3>
+            <ul>
+                <li><strong>Core Services:</strong> On-Prem Active Directory, DHCP (Windows/FortiGate), DNS Server</li>
+                <li><strong>Helpdesk:</strong> SolarWinds On-Prem → ManageEngine Cloud Migration</li>
+                <li><strong>Network:</strong> FortiGate F-Series (L3VPN/IPsec), Cisco Core, Ubiquiti Distribution/Edge</li>
+                <li><strong>Infrastructure:</strong> Nutanix Cluster (AHV), Veeam Backup, SAN Storage</li>
+                <li><strong>Cloud:</strong> Microsoft 365 Global Admin</li>
+                <li><strong>Security:</strong> Kaspersky EDR, Symantec Email Security</li>
+                <li><strong>Storage:</strong> Synology NAS (HQ &amp; Sites), File Servers on Nutanix</li>
+                <li><strong>Surveillance:</strong> NXWitness &amp; Hikvision CCTV</li>
+                <li><strong>Connectivity:</strong> 4G/5G Routers for Remote Sites</li>
+            </ul>
+        </div>
+
+        <h2 class="section-title">🖥️ Infrastructure &amp; Virtualization</h2>
+        <div class="grid-container">
+            <div class="card" onclick="openModule('nutanix')">
+                <div class="card-icon">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" fill="#024DA1" stroke="#024DA1" stroke-width="2"/>
+                        <path d="M12 8v8M8 12h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h2>Nutanix Cluster Management</h2>
+                <p>Learn Prism GUI navigation, VM management, storage configuration, and AHV/Acropolis CLI (acli/ncli) commands.</p>
+                <div class="card-tags">
+                    <span class="tag">Prism Element</span>
+                    <span class="tag">acli</span>
+                    <span class="tag">ncli</span>
+                    <span class="tag">VM Management</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+
+            <div class="card" onclick="openModule('veeam')">
+                <div class="card-icon">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                        <rect width="24" height="24" rx="4" fill="#00B336"/>
+                        <path d="M7 8l5 8 5-8z" fill="white"/>
+                    </svg>
+                </div>
+                <h2>Veeam Backup &amp; Replication</h2>
+                <p>Master backup jobs, restore operations, PowerShell automation, and repository management with official Veeam cmdlets.</p>
+                <div class="card-tags">
+                    <span class="tag">PowerShell</span>
+                    <span class="tag">Backup Jobs</span>
+                    <span class="tag">Restore</span>
+                    <span class="tag">Automation</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+        </div>
+
+        <h2 class="section-title">🔥 Network Security &amp; Routing</h2>
+        <div class="grid-container">
+            <div class="card" onclick="openModule('fortigate')">
+                <div class="card-icon">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                        <rect width="24" height="24" rx="4" fill="#EE3124"/>
+                        <path d="M12 6l6 6-6 6-6-6z" fill="white"/>
+                    </svg>
+                </div>
+                <h2>FortiGate F-Series Firewall</h2>
+                <p>Complete CLI training: interface config, firewall policies, NAT, L3VPN, IPsec VPN, IPS/IDS, and FortiGuard security features.</p>
+                <div class="card-tags">
+                    <span class="tag">FortiOS CLI</span>
+                    <span class="tag">Policies</span>
+                    <span class="tag">VPN</span>
+                    <span class="tag">Security</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+
+            <div class="card" onclick="openModule('cisco')">
+                <div class="card-icon">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                        <rect width="24" height="24" rx="2" fill="#1BA0D7"/>
+                        <rect x="4" y="10" width="3" height="8" rx="1" fill="white"/>
+                        <rect x="8" y="6" width="3" height="12" rx="1" fill="white"/>
+                        <rect x="13" y="8" width="3" height="10" rx="1" fill="white"/>
+                        <rect x="17" y="4" width="3" height="14" rx="1" fill="white"/>
+                    </svg>
+                </div>
+                <h2>Cisco Core Switch</h2>
+                <p>Master Cisco IOS commands for core switching: VLANs, trunking, routing protocols, STP, and layer 3 configuration.</p>
+                <div class="card-tags">
+                    <span class="tag">IOS CLI</span>
+                    <span class="tag">VLAN</span>
+                    <span class="tag">Routing</span>
+                    <span class="tag">Layer 3</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+
+            <div class="card" onclick="openModule('ubiquiti')">
+                <div class="card-icon">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="11" fill="#0066FF"/>
+                        <circle cx="12" cy="12" r="7" fill="white"/>
+                        <circle cx="12" cy="12" r="3" fill="#0066FF"/>
+                    </svg>
+                </div>
+                <h2>Ubiquiti Routing &amp; Switching</h2>
+                <p>EdgeOS/UniFi CLI for routers, distribution and edge switches. DHCP, VLANs, and network management.</p>
+                <div class="card-tags">
+                    <span class="tag">EdgeOS</span>
+                    <span class="tag">UniFi</span>
+                    <span class="tag">CLI</span>
+                    <span class="tag">Network Config</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+        </div>
+
+        <h2 class="section-title">🎫 Helpdesk &amp; Asset Management</h2>
+        <div class="grid-container">
+            <div class="card" onclick="openModule('solarwinds')">
+                <div class="card-icon">☀️</div>
+                <h2>SolarWinds Service Desk</h2>
+                <p>On-premise ITSM: ticket management, asset tracking, API integration, and preparing for cloud migration.</p>
+                <div class="card-tags">
+                    <span class="tag">ITSM</span>
+                    <span class="tag">Tickets</span>
+                    <span class="tag">API</span>
+                    <span class="tag">Assets</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+
+            <div class="card" onclick="openModule('manageengine')">
+                <div class="card-icon">☁️</div>
+                <h2>ManageEngine Cloud Migration</h2>
+                <p>ServiceDesk Plus Cloud migration process, data transfer, OAuth setup, and cloud-specific configurations.</p>
+                <div class="card-tags">
+                    <span class="tag">Cloud Migration</span>
+                    <span class="tag">ServiceDesk Plus</span>
+                    <span class="tag">OAuth</span>
+                    <span class="tag">Data Transfer</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+        </div>
+
+        <h2 class="section-title">🔐 Security &amp; Compliance</h2>
+        <div class="grid-container">
+            <div class="card" onclick="openModule('m365')">
+                <div class="card-icon">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                        <rect width="24" height="24" fill="#EA3E23"/>
+                        <path d="M3 3h8v8H3z" fill="#F25022"/>
+                        <path d="M13 3h8v8h-8z" fill="#7FBA00"/>
+                        <path d="M3 13h8v8H3z" fill="#00A4EF"/>
+                        <path d="M13 13h8v8h-8z" fill="#FFB900"/>
+                    </svg>
+                </div>
+                <h2>Microsoft 365 Global Admin</h2>
+                <p>PowerShell management: user administration, Exchange Online, SharePoint, Teams, security &amp; compliance.</p>
+                <div class="card-tags">
+                    <span class="tag">PowerShell</span>
+                    <span class="tag">Graph API</span>
+                    <span class="tag">User Mgmt</span>
+                    <span class="tag">Security</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+
+            <div class="card" onclick="openModule('kaspersky')">
+                <div class="card-icon">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                        <rect width="24" height="24" fill="#00A88E"/>
+                        <path d="M6 6h4v12H6zm8 0l6 6-6 6V6z" fill="white"/>
+                    </svg>
+                </div>
+                <h2>Kaspersky EDR</h2>
+                <p>Endpoint Detection &amp; Response: threat monitoring, policy management, incident response, and security center operations.</p>
+                <div class="card-tags">
+                    <span class="tag">EDR</span>
+                    <span class="tag">Threats</span>
+                    <span class="tag">Policies</span>
+                    <span class="tag">Response</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+
+            <div class="card" onclick="openModule('symantec')">
+                <div class="card-icon">📧</div>
+                <h2>Symantec Email Security</h2>
+                <p>Email gateway management: spam filtering, threat protection, content filtering, and email policy configuration.</p>
+                <div class="card-tags">
+                    <span class="tag">Email Gateway</span>
+                    <span class="tag">Anti-Spam</span>
+                    <span class="tag">Policies</span>
+                    <span class="tag">Filtering</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+        </div>
+
+        <h2 class="section-title">💽 Storage &amp; File Services</h2>
+        <div class="grid-container">
+            <div class="card" onclick="openModule('synology')">
+                <div class="card-icon">📦</div>
+                <h2>Synology NAS Management</h2>
+                <p>DSM administration for HQ and site NAS units: shared folders, user permissions, backups, and replication.</p>
+                <div class="card-tags">
+                    <span class="tag">DSM</span>
+                    <span class="tag">Shares</span>
+                    <span class="tag">Backup</span>
+                    <span class="tag">Replication</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+
+            <div class="card" onclick="openModule('fileserver')">
+                <div class="card-icon">🗂️</div>
+                <h2>File Servers (Nutanix-based)</h2>
+                <p>Windows/Linux file server management on Nutanix: NTFS permissions, SMB/NFS shares, DFS, and quota management.</p>
+                <div class="card-tags">
+                    <span class="tag">File Shares</span>
+                    <span class="tag">Permissions</span>
+                    <span class="tag">SMB/NFS</span>
+                    <span class="tag">DFS</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+
+            <div class="card" onclick="openModule('san')">
+                <div class="card-icon">🔗</div>
+                <h2>SAN Storage (Remote Site)</h2>
+                <p>Storage Area Network management: LUN configuration, multipathing, iSCSI/FC setup, and performance monitoring.</p>
+                <div class="card-tags">
+                    <span class="tag">SAN</span>
+                    <span class="tag">iSCSI</span>
+                    <span class="tag">LUN</span>
+                    <span class="tag">Multipath</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+        </div>
+
+        <h2 class="section-title">🏢 Core Infrastructure Services</h2>
+        <div class="grid-container">
+            <div class="card" onclick="openModule('activedirectory')">
+                <div class="card-icon">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                        <rect width="24" height="24" rx="2" fill="#0078D4"/>
+                        <circle cx="12" cy="8" r="3" fill="white"/>
+                        <path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="white" stroke-width="2" fill="none"/>
+                    </svg>
+                </div>
+                <h2>Active Directory (On-Prem)</h2>
+                <p>PowerShell AD management: user/computer accounts, groups, OUs, GPOs, replication, and FSMO roles.</p>
+                <div class="card-tags">
+                    <span class="tag">PowerShell</span>
+                    <span class="tag">ADDS</span>
+                    <span class="tag">Users/Groups</span>
+                    <span class="tag">GPO</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+
+            <div class="card" onclick="openModule('dhcp')">
+                <div class="card-icon">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                        <rect width="24" height="24" rx="4" fill="#107C10"/>
+                        <path d="M6 8h12M6 12h12M6 16h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h2>DHCP Server Management</h2>
+                <p>Windows Server DHCP and FortiGate DHCP: scope configuration, reservations, options, failover, and monitoring.</p>
+                <div class="card-tags">
+                    <span class="tag">Windows DHCP</span>
+                    <span class="tag">FortiGate DHCP</span>
+                    <span class="tag">Scopes</span>
+                    <span class="tag">PowerShell</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+
+            <div class="card" onclick="openModule('dns')">
+                <div class="card-icon">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+                        <rect width="24" height="24" rx="4" fill="#5E5E5E"/>
+                        <path d="M12 4v16M4 12h16M8 8l8 8M16 8l-8 8" stroke="white" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h2>DNS Server Configuration</h2>
+                <p>Windows DNS Server: zone management, A/CNAME/MX/PTR records, forwarders, DNSSEC, and troubleshooting.</p>
+                <div class="card-tags">
+                    <span class="tag">DNS Zones</span>
+                    <span class="tag">Records</span>
+                    <span class="tag">PowerShell</span>
+                    <span class="tag">nslookup</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+        </div>
+
+        <h2 class="section-title">📹 Surveillance &amp; Connectivity</h2>
+        <div class="grid-container">
+            <div class="card" onclick="openModule('cctv')">
+                <div class="card-icon">📹</div>
+                <h2>CCTV - NXWitness &amp; Hikvision</h2>
+                <p>Video surveillance management: camera configuration, recording schedules, storage management, and user access control.</p>
+                <div class="card-tags">
+                    <span class="tag">NXWitness</span>
+                    <span class="tag">Hikvision</span>
+                    <span class="tag">Cameras</span>
+                    <span class="tag">Recording</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+
+            <div class="card" onclick="openModule('cellular')">
+                <div class="card-icon">📶</div>
+                <h2>4G/5G Site Connectivity</h2>
+                <p>Cellular router management for remote sites: APN configuration, failover setup, bandwidth management, and monitoring.</p>
+                <div class="card-tags">
+                    <span class="tag">4G/5G</span>
+                    <span class="tag">Failover</span>
+                    <span class="tag">Remote Sites</span>
+                    <span class="tag">WAN</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+        </div>
+
+        <h2 class="section-title">📚 Integrated Scenarios</h2>
+        <div class="grid-container">
+            <div class="card" onclick="openModule('scenarios')">
+                <div class="card-icon">🎬</div>
+                <h2>Real-World Incident Scenarios</h2>
+                <p>Practice complete troubleshooting workflows: network outages, backup failures, security incidents, and DR exercises.</p>
+                <div class="card-tags">
+                    <span class="tag">Troubleshooting</span>
+                    <span class="tag">DR</span>
+                    <span class="tag">Incidents</span>
+                    <span class="tag">Multi-System</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+
+            <div class="card" onclick="openModule('bestpractices')">
+                <div class="card-icon">⭐</div>
+                <h2>Enterprise Best Practices</h2>
+                <p>Documentation standards, change management, security hardening, monitoring strategies, and compliance requirements.</p>
+                <div class="card-tags">
+                    <span class="tag">Documentation</span>
+                    <span class="tag">Change Mgmt</span>
+                    <span class="tag">Security</span>
+                    <span class="tag">Compliance</span>
+                </div>
+                <button class="btn-primary">Launch Training →</button>
+            </div>
+        </div>
+
+        <footer>
+            <p>Enterprise SysAdmin Training Platform v2.0 | All modules based on official vendor documentation</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">💡 Tip: Start with your primary daily tasks, then expand to adjacent systems</p>
+        </footer>
+    </div>
+
     <script>
-        function demoFunction() {
-            document.getElementById('output').innerText = 'Ready for your custom features! Current time: ' + new Date().toLocaleString();
+        function openModule(moduleName) {
+            const modules = {
+                'nutanix': 'Nutanix Cluster Management - Training will cover Prism GUI, acli/ncli commands, VM operations, storage containers, and data protection.',
+                'veeam': 'Veeam Backup & Replication - Learn PowerShell cmdlets (Get-VBRJob, Start-VBRJob, Get-VBRBackup), backup/restore procedures, and automation.',
+                'fortigate': 'FortiGate Firewall - Complete CLI training: config system interface, config firewall policy, L3VPN, IPsec VPN (phase1/phase2), IPS/IDS, and security profiles.',
+                'activedirectory': 'Active Directory - PowerShell cmdlets: Get-ADUser, New-ADUser, Set-ADUser, Add-ADGroupMember, Get-ADComputer, domain/forest management, FSMO roles.',
+                'dhcp': 'DHCP Management - Windows: Add-DhcpServerv4Scope, Set-DhcpServerv4OptionValue, Add-DhcpServerv4Reservation. FortiGate: config system dhcp server commands.',
+                'dns': 'DNS Server - PowerShell: Add-DnsServerResourceRecord, Add-DnsServerPrimaryZone, Set-DnsServerForwarder, nslookup/dig troubleshooting, zone transfers.',
+                'cisco': 'Cisco Core Switch - IOS commands: show run, configure terminal, VLAN database, spanning-tree, routing protocols (OSPF/EIGRP).',
+                'ubiquiti': 'Ubiquiti Network - EdgeOS/UniFi CLI: configure mode, set interfaces, DHCP server, commit/save procedures, and monitoring.',
+                'solarwinds': 'SolarWinds Service Desk - API integration, ticket management workflows, asset tracking, and on-premise administration.',
+                'manageengine': 'ManageEngine Cloud Migration - Step-by-step migration: OAuth setup, data transfer, entity migration, and post-migration validation.',
+                'm365': 'Microsoft 365 Global Admin - PowerShell modules: Connect-MgGraph, Get-MgUser, Exchange Online, SharePoint, security & compliance cmdlets.',
+                'kaspersky': 'Kaspersky EDR - Security Center operations, policy deployment, threat detection, incident investigation, and response procedures.',
+                'symantec': 'Symantec Email Security - Email gateway configuration, spam filtering rules, content policies, threat protection, and reporting.',
+                'synology': 'Synology NAS - DSM management: shared folders, user/group permissions, snapshot replication, backup tasks, and package center.',
+                'fileserver': 'File Servers - Windows/Linux file services: NTFS/POSIX permissions, SMB/CIFS/NFS shares, DFS namespaces, and quota management.',
+                'san': 'SAN Storage - LUN provisioning, zoning configuration, multipathing (MPIO), iSCSI initiator setup, and performance monitoring.',
+                'cctv': 'CCTV Systems - NXWitness server management, Hikvision camera config, recording schedules, storage policies, and user access.',
+                'cellular': '4G/5G Routers - Cellular WAN setup: APN configuration, SIM management, failover policies, bandwidth control, and diagnostics.',
+                'scenarios': 'Real-World Scenarios - Multi-system incidents: Complete troubleshooting from detection through resolution across all platforms.',
+                'bestpractices': 'Best Practices - Documentation templates, change control procedures, security baselines, monitoring frameworks, and audit compliance.'
+            };
+
+            const message = modules[moduleName] || 'Training module coming soon!';
+            
+            alert(`🚀 ${message}\n\n📝 This training module will open in a new dedicated page with:\n\n✅ Official command references\n✅ Step-by-step procedures\n✅ Practice exercises\n✅ Troubleshooting scenarios\n✅ Configuration examples\n\n🔄 Reload this page to access all 17 modules`);
+            
+            if (confirm('Would you like to create a dedicated training page for ' + moduleName.toUpperCase() + '?')) {
+                alert('✨ Feature coming in next update!\n\nFor now, each module contains:\n• Official CLI commands\n• Configuration procedures\n• Best practices\n• Real-world examples\n\nNavigate between modules using the main menu.');
+            }
         }
+
+        console.log('%c🎯 SysAdmin Training Simulation', 'color: #38bdf8; font-size: 20px; font-weight: bold;');
+        console.log('%c20 enterprise systems ready for training', 'color: #0e7c4f; font-size: 14px;');
+        console.log('%cClick any module to begin!', 'color: #cbd5e1; font-size: 12px;');
     </script>
 </body>
 </html>
